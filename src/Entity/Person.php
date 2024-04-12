@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PersonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
@@ -18,6 +20,17 @@ class Person
 
     #[ORM\Column(nullable: true)]
     private ?int $age = null;
+
+    /**
+     * @var Collection<int, PersonSkills>
+     */
+    #[ORM\OneToMany(targetEntity: PersonSkills::class, mappedBy: 'person', orphanRemoval: true)]
+    private Collection $Skill;
+
+    public function __construct()
+    {
+        $this->Skill = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -51,5 +64,36 @@ class Person
     public function introduceMyself(): string
     {
         $sentence = 'My name is ' . $name;
+        return $sentence;
+    }
+
+    /**
+     * @return Collection<int, PersonSkills>
+     */
+    public function getSkill(): Collection
+    {
+        return $this->Skill;
+    }
+
+    public function addSkill(PersonSkills $skill): static
+    {
+        if (!$this->Skill->contains($skill)) {
+            $this->Skill->add($skill);
+            $skill->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(PersonSkills $skill): static
+    {
+        if ($this->Skill->removeElement($skill)) {
+            // set the owning side to null (unless already changed)
+            if ($skill->getPerson() === $this) {
+                $skill->setPerson(null);
+            }
+        }
+
+        return $this;
     }
 }
