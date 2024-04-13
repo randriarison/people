@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Occupation;
 use App\Entity\Person;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,6 +16,11 @@ class PersonType extends AbstractType
         $builder
             ->add('name')
             ->add('age')
+            ->add('occupation', EntityType::class, [
+                'class' => Occupation::class,
+                'choice_label' => 'name', 
+                'placeholder' => 'choisissez'
+            ])
         ;
     }
 

@@ -39,9 +39,19 @@ class Person
     #[ORM\OneToMany(targetEntity: PersonSkills::class, mappedBy: 'person', orphanRemoval: true)]
     private Collection $Skill;
 
+    #[ORM\ManyToOne(inversedBy: 'people')]
+    private ?Occupation $occupation = null;
+
+    /**
+     * @var Collection<int, Work>
+     */
+    #[ORM\OneToMany(targetEntity: Work::class, mappedBy: 'assignedTo')]
+    private Collection $works;
+
     public function __construct()
     {
         $this->Skill = new ArrayCollection();
+        $this->works = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,6 +118,48 @@ class Person
             // set the owning side to null (unless already changed)
             if ($skill->getPerson() === $this) {
                 $skill->setPerson(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getOccupation(): ?Occupation
+    {
+        return $this->occupation;
+    }
+
+    public function setOccupation(?Occupation $occupation): static
+    {
+        $this->occupation = $occupation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Work>
+     */
+    public function getWorks(): Collection
+    {
+        return $this->works;
+    }
+
+    public function addWork(Work $work): static
+    {
+        if (!$this->works->contains($work)) {
+            $this->works->add($work);
+            $work->setAssignedTo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWork(Work $work): static
+    {
+        if ($this->works->removeElement($work)) {
+            // set the owning side to null (unless already changed)
+            if ($work->getAssignedTo() === $this) {
+                $work->setAssignedTo(null);
             }
         }
 

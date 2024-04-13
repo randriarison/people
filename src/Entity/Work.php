@@ -29,6 +29,16 @@ class Work
     #[ORM\Column(nullable: true)]
     private ?int $duration = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $completionLevel = null;
+
+    #[ORM\ManyToOne(inversedBy: 'works')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Occupation $occupation = null;
+
+    #[ORM\ManyToOne(inversedBy: 'works')]
+    private ?Person $assignedTo = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +100,42 @@ class Work
     public function setDuration(?int $duration): static
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getCompletionLevel(): ?int
+    {
+        return $this->completionLevel;
+    }
+
+    public function setCompletionLevel(?int $completionLevel): static
+    {
+        $this->completionLevel = $completionLevel;
+
+        return $this;
+    }
+
+    public function getOccupation(): ?Occupation
+    {
+        return $this->occupation;
+    }
+
+    public function setOccupation(?Occupation $occupation): static
+    {
+        $this->occupation = $occupation;
+
+        return $this;
+    }
+
+    public function getAssignedTo(): ?Person
+    {
+        return $this->assignedTo;
+    }
+
+    public function setAssignedTo(?Person $assignedTo): static
+    {
+        $this->assignedTo = $assignedTo;
 
         return $this;
     }

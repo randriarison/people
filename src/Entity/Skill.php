@@ -32,10 +32,10 @@ class Skill
 
     #[Gedmo\Slug(fields: ['name'])]
     #[ORM\Column(length: 255)]
-    private ?string $slug;
+    private ?string $slug = null;
 
     #[ORM\ManyToOne(inversedBy: 'skills')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Occupation $occupation = null;
 
     /**
@@ -119,7 +119,7 @@ class Skill
 
         return $this;
     }
-    
+
     public function getSlug(): ?string
     {
         return $this->slug;

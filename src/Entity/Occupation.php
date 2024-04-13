@@ -28,7 +28,7 @@ class Occupation
 
     #[Gedmo\Slug(fields: ['name'])]
     #[ORM\Column(length: 255)]
-    private ?string $slug;
+    private ?string $slug = null;
 
     /**
      * @var Collection<int, Tool>
@@ -42,10 +42,24 @@ class Occupation
     #[ORM\OneToMany(targetEntity: Skill::class, mappedBy: 'occupation')]
     private Collection $skills;
 
+    /**
+     * @var Collection<int, Person>
+     */
+    #[ORM\OneToMany(targetEntity: Person::class, mappedBy: 'occupation')]
+    private Collection $people;
+
+    /**
+     * @var Collection<int, Work>
+     */
+    #[ORM\OneToMany(targetEntity: Work::class, mappedBy: 'occupation')]
+    private Collection $works;
+
     public function __construct()
     {
         $this->tools = new ArrayCollection();
         $this->skills = new ArrayCollection();
+        $this->people = new ArrayCollection();
+        $this->works = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -125,6 +139,66 @@ class Occupation
             // set the owning side to null (unless already changed)
             if ($skill->getOccupation() === $this) {
                 $skill->setOccupation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Person>
+     */
+    public function getPeople(): Collection
+    {
+        return $this->people;
+    }
+
+    public function addPerson(Person $person): static
+    {
+        if (!$this->people->contains($person)) {
+            $this->people->add($person);
+            $person->setOccupation($this);
+        }
+
+        return $this;
+    }
+
+    public function removePerson(Person $person): static
+    {
+        if ($this->people->removeElement($person)) {
+            // set the owning side to null (unless already changed)
+            if ($person->getOccupation() === $this) {
+                $person->setOccupation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Work>
+     */
+    public function getWorks(): Collection
+    {
+        return $this->works;
+    }
+
+    public function addWork(Work $work): static
+    {
+        if (!$this->works->contains($work)) {
+            $this->works->add($work);
+            $work->setOccupation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWork(Work $work): static
+    {
+        if ($this->works->removeElement($work)) {
+            // set the owning side to null (unless already changed)
+            if ($work->getOccupation() === $this) {
+                $work->setOccupation(null);
             }
         }
 
