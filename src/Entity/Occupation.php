@@ -6,8 +6,15 @@ use App\Repository\OccupationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: OccupationRepository::class)]
+#[UniqueEntity(
+    fields: ['name'],
+    message: 'ce métier existe déjà'
+)]
 class Occupation
 {
     #[ORM\Id]
@@ -15,8 +22,13 @@ class Occupation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank]
     private ?string $name = null;
+
+    #[Gedmo\Slug(fields: ['name'])]
+    #[ORM\Column(length: 255)]
+    private ?string $slug;
 
     /**
      * @var Collection<int, Tool>
@@ -52,6 +64,12 @@ class Occupation
 
         return $this;
     }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
 
     /**
      * @return Collection<int, Tool>

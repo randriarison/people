@@ -6,8 +6,15 @@ use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
+#[UniqueEntity(
+    fields: ['name'],
+    message: 'ce nom est déjà utilisé.'
+)]
 class Person
 {
     #[ORM\Id]
@@ -16,7 +23,12 @@ class Person
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $name = null;
+
+    #[Gedmo\Slug(fields: ['name'])]
+    #[ORM\Column(length: 255)]
+    private ?string $slug;
 
     #[ORM\Column(nullable: true)]
     private ?int $age = null;
@@ -49,6 +61,11 @@ class Person
         return $this;
     }
 
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
     public function getAge(): ?int
     {
         return $this->age;
@@ -63,7 +80,7 @@ class Person
 
     public function introduceMyself(): string
     {
-        $sentence = 'My name is ' . $name;
+        $sentence = 'My name is ' . $this->name;
         return $sentence;
     }
 
