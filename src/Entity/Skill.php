@@ -34,19 +34,22 @@ class Skill
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
-    #[ORM\ManyToOne(inversedBy: 'skills')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Occupation $occupation = null;
-
     /**
      * @var Collection<int, PersonSkills>
      */
     #[ORM\OneToMany(targetEntity: PersonSkills::class, mappedBy: 'skill', orphanRemoval: true)]
     private Collection $persons;
 
+    /**
+     * @var Collection<int, Occupation>
+     */
+    #[ORM\ManyToMany(targetEntity: Occupation::class, mappedBy: 'skills')]
+    private Collection $occupations;
+
     public function __construct()
     {
         $this->persons = new ArrayCollection();
+        $this->occupations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,18 +77,6 @@ class Skill
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getOccupation(): ?Occupation
-    {
-        return $this->occupation;
-    }
-
-    public function setOccupation(?Occupation $occupation): static
-    {
-        $this->occupation = $occupation;
 
         return $this;
     }
@@ -123,6 +114,33 @@ class Skill
     public function getSlug(): ?string
     {
         return $this->slug;
+    }
+
+    /**
+     * @return Collection<int, Occupation>
+     */
+    public function getOccupations(): Collection
+    {
+        return $this->occupations;
+    }
+
+    public function addOccupation(Occupation $occupation): static
+    {
+        if (!$this->occupations->contains($occupation)) {
+            $this->occupations->add($occupation);
+            $occupation->addSkill($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOccupation(Occupation $occupation): static
+    {
+        if ($this->occupations->removeElement($occupation)) {
+            $occupation->removeSkill($this);
+        }
+
+        return $this;
     }
 
 }

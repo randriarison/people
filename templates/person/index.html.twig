@@ -18,7 +18,7 @@
         {% for person in people %}
             <tr>
                 <td>{{ person.id }}</td>
-                <td>{{ person.name }}</td>
+                <td title="{{ person.occupation.introduceMyself }}">{{ person.name }}</td>
                 <td>{{ person.age }}</td>
                 <td>
                     <a href="{{ path('app_person_show', {'id': person.id}) }}">show</a>

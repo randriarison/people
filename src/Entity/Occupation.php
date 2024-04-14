@@ -15,7 +15,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
     fields: ['name'],
     message: 'ce métier existe déjà'
 )]
-class Occupation
+class Occupation implements PresentationInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -37,12 +37,6 @@ class Occupation
     private Collection $tools;
 
     /**
-     * @var Collection<int, Skill>
-     */
-    #[ORM\OneToMany(targetEntity: Skill::class, mappedBy: 'occupation')]
-    private Collection $skills;
-
-    /**
      * @var Collection<int, Person>
      */
     #[ORM\OneToMany(targetEntity: Person::class, mappedBy: 'occupation')]
@@ -54,12 +48,21 @@ class Occupation
     #[ORM\OneToMany(targetEntity: Work::class, mappedBy: 'occupation')]
     private Collection $works;
 
-    public function __construct()
+    /**
+     * @var Collection<int, Skill>
+     */
+    #[ORM\ManyToMany(targetEntity: Skill::class, inversedBy: 'occupations')]
+    private Collection $skills;
+
+    private ?PresentationInterface $person = null;
+
+    public function __construct(PresentationInterface $person = null)
     {
+       $this->person = $person;
         $this->tools = new ArrayCollection();
-        $this->skills = new ArrayCollection();
         $this->people = new ArrayCollection();
         $this->works = new ArrayCollection();
+        $this->skills = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -109,36 +112,6 @@ class Occupation
             // set the owning side to null (unless already changed)
             if ($tool->getOccupation() === $this) {
                 $tool->setOccupation(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Skill>
-     */
-    public function getSkills(): Collection
-    {
-        return $this->skills;
-    }
-
-    public function addSkill(Skill $skill): static
-    {
-        if (!$this->skills->contains($skill)) {
-            $this->skills->add($skill);
-            $skill->setOccupation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSkill(Skill $skill): static
-    {
-        if ($this->skills->removeElement($skill)) {
-            // set the owning side to null (unless already changed)
-            if ($skill->getOccupation() === $this) {
-                $skill->setOccupation(null);
             }
         }
 
@@ -203,5 +176,41 @@ class Occupation
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Skill>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skill $skill): static
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skill $skill): static
+    {
+        $this->skills->removeElement($skill);
+
+        return $this;
+    }
+
+    public function introduceMyself(): string
+    {
+        $sentence = $this->person->introduceMyself();
+        $sentence .= "Je suis $this->name de metier.";
+        return $sentence;
+    }
+
+    public function __clone(): void
+    {
+        $clone = clone $this;
     }
 }
