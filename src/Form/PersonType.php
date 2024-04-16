@@ -19,7 +19,8 @@ class PersonType extends AbstractType
             ->add('occupation', EntityType::class, [
                 'class' => Occupation::class,
                 'choice_label' => 'name', 
-                'placeholder' => 'choisissez'
+                'placeholder' => 'choisissez',
+                'required' => false
             ])
         ;
     }

@@ -10,12 +10,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
+
 #[ORM\Entity(repositoryClass: OccupationRepository::class)]
 #[UniqueEntity(
     fields: ['name'],
     message: 'ce métier existe déjà'
 )]
-class Occupation implements PresentationInterface
+class Occupation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -54,11 +56,9 @@ class Occupation implements PresentationInterface
     #[ORM\ManyToMany(targetEntity: Skill::class, inversedBy: 'occupations')]
     private Collection $skills;
 
-    private ?PresentationInterface $person = null;
 
-    public function __construct(PresentationInterface $person = null)
+    public function __construct()
     {
-       $this->person = $person;
         $this->tools = new ArrayCollection();
         $this->people = new ArrayCollection();
         $this->works = new ArrayCollection();
@@ -70,12 +70,12 @@ class Occupation implements PresentationInterface
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
         $this->name = $name;
 
@@ -202,15 +202,4 @@ class Occupation implements PresentationInterface
         return $this;
     }
 
-    public function introduceMyself(): string
-    {
-        $sentence = $this->person->introduceMyself();
-        $sentence .= "Je suis $this->name de metier.";
-        return $sentence;
-    }
-
-    public function __clone(): void
-    {
-        $clone = clone $this;
-    }
 }

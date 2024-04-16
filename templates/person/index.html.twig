@@ -3,22 +3,20 @@
 {% block title %}Person index{% endblock %}
 
 {% block body %}
-    <h1>Person index</h1>
-
+    <h1>Tous les habitants</h1>
+<br>
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Name</th>
                 <th>Age</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for person in people %}
-            <tr>
-                <td>{{ person.id }}</td>
-                <td title="{{ person.occupation.introduceMyself }}">{{ person.name }}</td>
+        {% for key, person in people %}
+            <tr>        
+                <td title="{{decorated[key].introduceMyself(person)}}">{{ person.name }}</td>
                 <td>{{ person.age }}</td>
                 <td>
                     <a href="{{ path('app_person_show', {'id': person.id}) }}">show</a>

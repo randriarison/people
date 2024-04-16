@@ -9,14 +9,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use App\Entity\PresentationInterface;
+use App\Service\Interface\EmployedInterface;
+use App\Service\Interface\NamedInterface;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
 #[UniqueEntity(
     fields: ['name'],
     message: 'ce nom est déjà utilisé.'
 )]
-class Person implements PresentationInterface
+class Person implements NamedInterface, EmployedInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -60,7 +61,7 @@ class Person implements PresentationInterface
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -91,8 +92,7 @@ class Person implements PresentationInterface
 
     public function introduceMyself(): string
     {
-        $sentence = $this->name ? "je m'appelle $this->name \n" : '';
-        return $sentence;
+       return $this->name ? "je m'appelle $this->name \n" : '';
     }
 
     /**
@@ -127,11 +127,7 @@ class Person implements PresentationInterface
 
     public function getOccupation(): ?Occupation
     {
-        $metier = $this->occupation;
-        //decorate Person object
-        $occupation = new Occupation($this);
-        $occupation->setName($metier->getName());
-        return $occupation;
+        return $this->occupation;
     }
 
     public function setOccupation(?Occupation $occupation): static
