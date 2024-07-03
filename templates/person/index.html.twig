@@ -3,12 +3,12 @@
 {% block title %}Person index{% endblock %}
 
 {% block body %}
-    <h1>Tous les habitants</h1>
+    <h1>Tous les membres</h1>
 <br>
     <table class="table">
         <thead>
             <tr>
-                <th>Name</th>
+                <th>Nom</th>
                 <th>Age</th>
                 <th>actions</th>
             </tr>
@@ -19,17 +19,17 @@
                 <td title="{{decorated[key].introduceMyself(person)}}">{{ person.name }}</td>
                 <td>{{ person.age }}</td>
                 <td>
-                    <a href="{{ path('app_person_show', {'id': person.id}) }}">show</a>
+                    <a href="{{ path('app_person_show', {'id': person.id}) }}">En savoir plus</a>
                     <a href="{{ path('app_person_edit', {'id': person.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">no records found</td>
+                <td colspan="4">Aucun membre enregistré</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_person_new') }}">Create new</a>
+    <a href="{{ path('app_person_new') }}">Ajouter un ami</a>
 {% endblock %}

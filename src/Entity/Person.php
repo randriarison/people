@@ -50,10 +50,27 @@ class Person implements NamedInterface, EmployedInterface
     #[ORM\OneToMany(targetEntity: Work::class, mappedBy: 'assignedTo')]
     private Collection $works;
 
+    #[ORM\OneToOne(inversedBy: 'person', cascade: ['persist', 'remove'])]
+    private ?User $user = null;
+
+    /**
+     * @var Collection<int, Team>
+     */
+    #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: 'people')]
+    private Collection $teams;
+
+    /**
+     * @var Collection<int, Manager>
+     */
+    #[ORM\ManyToMany(targetEntity: Manager::class, inversedBy: 'people')]
+    private Collection $managers;
+
     public function __construct()
     {
         $this->Skill = new ArrayCollection();
         $this->works = new ArrayCollection();
+        $this->teams = new ArrayCollection();
+        $this->managers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +180,72 @@ class Person implements NamedInterface, EmployedInterface
                 $work->setAssignedTo(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Team>
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
+
+    public function addTeam(Team $team): static
+    {
+        if (!$this->teams->contains($team)) {
+            $this->teams->add($team);
+        }
+        if ($team->getManager() !== null) {
+            $this->addManager($team->getManager());
+        }
+
+        return $this;
+    }
+
+    public function removeTeam(Team $team): static
+    {
+        $this->teams->removeElement($team);
+        if ($team->getManager() !== null && $this->getManagers()->contains($team->getManager())) {
+            $this->removeManager($team->getManager());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Manager>
+     */
+    public function getManagers(): Collection
+    {
+        return $this->managers;
+    }
+
+    public function addManager(Manager $manager): static
+    {
+        if (!$this->managers->contains($manager)) {
+            $this->managers->add($manager);
+        }
+
+        return $this;
+    }
+
+    public function removeManager(Manager $manager): static
+    {
+        $this->managers->removeElement($manager);
 
         return $this;
     }

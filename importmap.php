@@ -20,4 +20,8 @@ return [
         'version' => '5.3.3',
         'type' => 'css',
     ],
+    'login' => [
+        'path' => './assets/login.js',
+        'entrypoint' => true,
+    ],
 ];

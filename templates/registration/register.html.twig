@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SKEELLS - créer un compte{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/styles-connect.css') }}" rel="stylesheet"/>
+{% endblock %}
+{% block body_class %}dark{% endblock %}
+{% block body %}
+    {# include 'include-nav.html.twig' #}
+    <!-- /NAV SIDE NAV -->
+
+    <main class="content mb-4 mt-0">
+        <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
+            <div class="container-fluid px-0">
+                <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
+                    <div class="d-flex align-items-center">
+                        <h1>AJOUT D'UN UTILISATEUR</h1>
+                    </div>
+                    <!-- Navbar links -->
+                    {% include 'include-nav-profil.html.twig' %}
+                    <!-- /Navbar links -->
+                </div>
+            </div>
+        </nav>
+
+        <div class="container row mt-3 justify-content-between align-items-center text-center">
+            {% for flash_error in app.flashes('verify_email_error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+            <h1 class="h4">Nouveau compte skeels</h1>
+            <div class="col-md-6 mx-auto">
+                {{ form_start(registrationForm) }}
+                {% if registrationForm.vars.errors|length  %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(registrationForm) }}
+                    </div>
+                {% endif %}
+                {% if registrationForm.email.vars.errors|length  %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+                {% endif %}
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.email,  {'attr': {'class': 'form-control form-control-connect'}}) }}
+                    {{ form_label(registrationForm.email, 'Adresse Email') }}
+                </div>
+
+                {% if registrationForm.firstname.vars.errors|length  %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(registrationForm.firstname) }}
+                    </div>
+                {% endif %}
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.firstname,  {'attr': {'class': 'form-control form-control-connect'}}) }}
+                    {{ form_label(registrationForm.firstname, 'Prénom') }}
+                </div>
+
+                {% if registrationForm.lastname.vars.errors|length  %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(registrationForm.lastname) }}
+                    </div>
+                {% endif %}
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.lastname,  {'attr': {'class': 'form-control form-control-connect'}}) }}
+                    {{ form_label(registrationForm.lastname, 'Nom') }}
+                </div>
+
+
+                {% if registrationForm.phoneNumber.vars.errors|length  %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(registrationForm.phoneNumber) }}
+                    </div>
+                {% endif %}
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.phoneNumber,  {'attr': {'class': 'form-control form-control-connect'}}) }}
+                    {{ form_label(registrationForm.phoneNumber, 'Téléphone') }}
+                </div>
+
+                {% if registrationForm.plainPassword.vars.errors|length  %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(registrationForm.plainPassword) }}
+                    </div>
+                {% endif %}
+                <div class="form-floating mb-3">
+                    {{ form_widget(
+                        registrationForm.plainPassword,
+                        {'attr': {'class': 'form-control form-control-connect'}}
+                    ) }}
+                    {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+                </div>
+
+                {% if registrationForm.company is defined  %}
+                    {% if registrationForm.company.vars.errors|length  %}
+                        <div class="alert alert-danger">
+                            {{ form_errors(registrationForm.company) }}
+                        </div>
+                    {% endif %}
+                    <div class="form-floating mb-3">
+                        {{ form_widget(registrationForm.company,  {'attr': {'class': 'form-control form-select'}}) }}
+                        {{ form_label(registrationForm.company, 'Client') }}
+                    </div>
+                {% endif %}
+
+                {% if registrationForm.role.vars.errors|length  %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(registrationForm.role) }}
+                    </div>
+                {% endif %}
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.role,  {'attr': {'class': 'form-control form-select'}}) }}
+                    {{ form_label(registrationForm.role, 'Role') }}
+                </div>
+                {% if registrationForm.avatarFile is defined  %}
+                    {% if registrationForm.avatarFile.vars.errors|length  %}
+                        <div class="alert alert-danger">
+                            {{ form_errors(registrationForm.avatarFile) }}
+                        </div>
+                    {% endif %}
+                    <div class="mb-3 text-start">
+                        {{ form_label(registrationForm.avatarFile, 'Avatar') }}
+                        {{ form_widget(registrationForm.avatarFile) }}
+                    </div>
+                {% endif %}
+                {% if registrationForm.agreeTerms.vars.errors|length  %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(
+                            registrationForm.agreeTerms
+                        ) }}
+                    </div>
+                {% endif %}
+                <div class="mb-3 text-start">
+                    {{ form_widget(registrationForm.agreeTerms, {'attr':{'class': 'mx-2'}}) }}
+                    {{ form_label(registrationForm.agreeTerms, "J'accepte les conditions générales de Skeels") }}
+                </div>
+                <div class="d-grid mb-2	">
+                    <button type="submit" class="btn btn-connect">Enregistrer</button>
+                </div>
+                {{ form_end(registrationForm) }}
+            </div>
+        </div><!-- /Card -->
+    </div>
+</main>
+{% endblock %}
